@@ -1,0 +1,7 @@
+-Wall
+-Wextra
+-Wpedantic
+-Werror
+-Iinclude
+-O2
+-std=c99

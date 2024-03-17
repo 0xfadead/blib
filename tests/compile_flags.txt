@@ -1,0 +1,7 @@
+-Wall
+-Wextra
+-Wpedantic
+-Werror
+-O2
+-I../include
+-Ilib/include
