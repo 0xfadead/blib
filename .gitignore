@@ -1,0 +1,4 @@
+*.o
+*.~
+*.swap
+compile_flags.txt

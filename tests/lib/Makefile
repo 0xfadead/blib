@@ -18,8 +18,9 @@ RM ?= rm
 CLEAN ?= $(RM) $(RM_FLAGS)
 
 # ----- Program Flags -----
-override WFLAGS += -Wall -Wextra -Wpedantic -Werror
-override CFLAGS += $(WFLAGS) -O2 -I$(INCLUDE_DIR)
+WFLAGS += -Wall -Wextra -Wpedantic -Werror
+IFLAGS += -I$(INCLUDE_DIR)
+CFLAGS += $(WFLAGS) -O2
 
 AR_FLAGS ?= rcs
 RM_FLAGS ?= -rf
@@ -31,7 +32,7 @@ all : $(BIN)
 .SUFFIXES: .c .o
 .c.o:
 	@echo "  CC    $@"
-	@ $(CC) -o $@ $< $(CFLAGS) -c
+	@ $(CC) -o $@ $< $(CFLAGS) $(IFLAGS) -c
 
 # ----- Lower Level Targets -----
 $(BIN): $(OBJS)
@@ -44,4 +45,4 @@ clean:
 	@ $(CLEAN) $(OBJS) $(BIN)
 
 flags:
-	@ echo $(CFLAGS) | sed 's/ /\n/g' > $(FLAGS)
+	@ echo $(CFLAGS) $(IFLAGS) | sed 's/ /\n/g' > $(FLAGS)

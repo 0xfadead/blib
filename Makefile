@@ -52,6 +52,8 @@ run_tests:
 # ----- Build object files -----
 .SUFFIXES: .c .o
 
+src/datastructures/arrays/dynamic.o: include/blib/datastructures/arrays/dynamic.h
+src/testing/time/time_tests.o: include/blib/testing/time/time_tests.h
 .c.o:
 	@echo "  CC    $@"
 	@ $(CC) -o $@ $< $(CFLAGS) -c
@@ -65,8 +67,6 @@ $(OUT): $(OBJS)
 .PHONY: clean flags
 
 clean:
-	@echo "  CLEAN $(TESTS_DIR)"
-	@ $(MAKE) -C $(TESTS_DIR) clean
 	@echo "  CLEAN $(OBJS) $(OUT)"
 	@ $(CLEAN) $(OBJS) $(OUT)
 
