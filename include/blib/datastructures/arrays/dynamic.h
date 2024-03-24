@@ -32,7 +32,6 @@ dynamic_arr dynamic_arr_copy(nonnullable const dynamic_arr* src);
  * [in] Pointer to new element 
  */
 void dynamic_arr_replace(nonnullable dynamic_arr* self, unsigned long index, nonnullable const void* element);
-
 /**
  * @function dynamic_arr_bulk_replace
  * @brief Replace sepcified number of elements of dynamic array at specified index
@@ -58,7 +57,6 @@ void dynamic_arr_bulk_replace(nonnullable dynamic_arr* self, unsigned long index
  * [in] The index of the second element 
  */
 void dynamic_arr_flip(nonnullable dynamic_arr* self, unsigned long index1, unsigned long index2);
-
 /**
  * @function dynamic_arr_bulk_flip
  * @brief Flip two arrays of elements, at the specified indexes, with each other
@@ -84,7 +82,6 @@ void dynamic_arr_bulk_flip(nonnullable dynamic_arr* self, unsigned long index1, 
  * [out] Pointer to write the element to 
  */
 void dynamic_arr_peek(nonnullable const dynamic_arr* self, unsigned long index, nonnullable void* out);
-
 /**
  * @function dynamic_arr_bulk_peek
  * @brief Read specified amount of elements in dynamic array from specified index on

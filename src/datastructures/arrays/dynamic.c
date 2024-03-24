@@ -6,6 +6,9 @@
 #include <string.h>
 #include <stdbool.h>
 
+#include <xmmintrin.h>
+#include <x86intrin.h>
+
 
 /* ==================
  * Convenience Macros
