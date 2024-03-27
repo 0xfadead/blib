@@ -6,10 +6,6 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include <xmmintrin.h>
-#include <x86intrin.h>
-
-
 /* ==================
  * Convenience Macros
  * ================== */
@@ -67,6 +63,7 @@
  * ================================== */
 void dynamic_arr_resize(dynamic_arr* self, long change, bool explicit_size);
 void dynamic_arr_move(dynamic_arr* self, long change, unsigned long offset, unsigned long len);
+void dynamic_arr_print(const dynamic_arr* self);
 /* ================================== */
 
 /* =============
@@ -75,20 +72,11 @@ void dynamic_arr_move(dynamic_arr* self, long change, unsigned long offset, unsi
 dynamic_arr __intern_dynamic_generic_arr_new(unsigned int element_size) {
   dynamic_arr arr = {0};
 
-  if (sizeof(char) != 1) {
-    fputs(
-        "sizeof(char) is not 1 byte: All pointer arithmetic in blib relies on chars being one byte\n"
-        "=== ABORT ===\n", 
-        stderr);
-
-    abort();
-  }
-
   arr.size = element_size;
   arr.cap = 1;
 
   arr.start = malloc(arr.size);
-  if (!arr.size) {
+  if (!arr.start) {
     fprintf(stderr, 
         "Failed to allocate initial memory for dynamic array of size %u: %s\n"
         "=== ABORT ===\n",
@@ -138,7 +126,7 @@ void dynamic_arr_bulk_replace(dynamic_arr* self, unsigned long index, const void
 } /* dynamic_arr_bulk_replace */
 
 void dynamic_arr_flip(dynamic_arr* self, unsigned long index1, unsigned long index2) {
-  char* buffer = NULL;
+  uint8_t* buffer = NULL;
   if (self->num < self->cap) {
     buffer = self->start + index2off(self, self->num);
   } else if (self->deadzone) {
@@ -163,7 +151,7 @@ void dynamic_arr_bulk_flip(dynamic_arr* self, unsigned long index1, unsigned lon
 
   const unsigned long size = num * self->size;
 
-  char* ptr = self->start + index2off(self, self->num);
+  uint8_t* ptr = self->start + index2off(self, self->num);
   unsigned long elems_size = (self->cap - self->num) % (size + 1);
   if (elems_size)
     goto memory_cpy;
@@ -196,6 +184,7 @@ void dynamic_arr_peek(const dynamic_arr* self, unsigned long index, void* out) {
   check_index(self, "read", index);
 
   memcpy(out, self->start + index2off(self, index), self->size);
+
   return;
 } /* dynamic_arr_peek */
 
@@ -203,6 +192,8 @@ void dynamic_arr_bulk_peek(dynamic_arr* self, unsigned long index, void* out, un
   check_index_len(self, "bulk-peek", index, num);
   
   memcpy(out, self->start + index2off(self, index), num * self->size);
+
+  return;
 } /* dynamic_arr_bulk_peek */
 
 void dynamic_arr_append(dynamic_arr* self, const void* element) {
@@ -232,6 +223,8 @@ void dynamic_arr_prepend(dynamic_arr* self, const void* element) {
     memcpy(self->start + index2off(self, 0), element, self->size);
   }
 
+  self->num++;
+
   return;
 } /* dynamic_arr_prepend */
 
@@ -242,13 +235,15 @@ void dynamic_arr_bulk_prepend(dynamic_arr* self, const void* elements, unsigned 
   if (move_elems) {
     dynamic_arr_resize(self, move_elems, false);
     dynamic_arr_move(self, move_elems, 0, self->num);
-    memcpy(self->start + index2off(self, 0), (char*)elements + ((num - move_elems) * self->size), move_elems);
+    memcpy(self->start + index2off(self, 0), (uint8_t*)elements + ((num - move_elems) * self->size), move_elems);
   }
 
   if (deadzone_elems) {
     self->deadzone -= deadzone_elems;
     memcpy(self->start + index2off(self, 0), elements, deadzone_elems * self->size);
   }
+
+  self->num += num;
 
   return;
 } /* dynamic_arr_bulk_prepend */
@@ -259,7 +254,8 @@ void dynamic_arr_insert_at(dynamic_arr* self, unsigned long index, const void* e
   if (self->deadzone && self->num >> 1 >= index) {
     self->deadzone--;
     index++;
-    dynamic_arr_move(self, -1, 0, index + 1);
+
+    dynamic_arr_move(self, -1, 0, index);
 
     memcpy(self->start + index2off(self, index), element, self->size);
   } else {
@@ -268,6 +264,7 @@ void dynamic_arr_insert_at(dynamic_arr* self, unsigned long index, const void* e
 
     memcpy(self->start + index2off(self, index), element, self->size);
   }
+  self->num++;
 
   return;
 } /* dynamic_arr_insert_at */
@@ -275,15 +272,17 @@ void dynamic_arr_insert_at(dynamic_arr* self, unsigned long index, const void* e
 void dynamic_arr_bulk_insert_at(dynamic_arr* self, unsigned long index, void* elements, unsigned long num) {
   check_index_len(self, "bulk-insert", index, num);
   
-  const unsigned char preferred_side   = self->num >> 1 < index;
-  const unsigned long deadzone_inserts = preferred_side * (num % (self->deadzone + 1));
-  const unsigned long end_inserts      = num - deadzone_inserts;
+  const          uint8_t preferred_side   = self->num >> 1 < index;
+  const unsigned long    deadzone_inserts = preferred_side * (num % (self->deadzone + 1));
+  const unsigned long    end_inserts      = num - deadzone_inserts;
 
   dynamic_arr_move(self, -deadzone_inserts, 0, index + 1);
   dynamic_arr_resize(self, end_inserts, false);
   dynamic_arr_move(self, end_inserts, index + 1, self->num - index);
 
   memcpy(self->start + index2off(self, index - deadzone_inserts), elements, num * self->size);
+
+  self->num += num;
 
   return;
 } /* dynamic_arr_bulk_insert_at */
@@ -325,6 +324,8 @@ void dynamic_arr_resize_to(dynamic_arr* self, void* out, unsigned long new_size)
   if (out && new_size < self->num)
     memcpy(out, self->start + index2off(self, new_size), (self->num - new_size) * self->size);
 
+  self->num = new_size;
+
   dynamic_arr_resize(self, (new_size ? new_size : 1), true);
 
   return;
@@ -362,6 +363,10 @@ void dynamic_arr_quick_remove_at(dynamic_arr* self, unsigned long index, void* o
     dynamic_arr_move(self, -1, index + 1, self->num - index - 1);
     dynamic_arr_resize(self, -1, false);
   }
+
+  self->num--;
+
+  return;
 } /* dynamic_arr_quick_remove_at */
 
 void dynamic_arr_bulk_remove_at(dynamic_arr* self, unsigned long index, void* out, unsigned long num) {
@@ -372,6 +377,8 @@ void dynamic_arr_bulk_remove_at(dynamic_arr* self, unsigned long index, void* ou
 
   dynamic_arr_move(self, -num, index + num, self->num - index - num);
   dynamic_arr_resize(self, -num, false);
+
+  self->num -= num;
 
   return;
 } /* dynamic_arr_bulk_remove_at */
@@ -388,7 +395,7 @@ void dynamic_arr_cleanup(dynamic_arr* self) {
 /* =====================
  * Convenience Functions
  * ===================== */
-void dynamic_arr_resize(dynamic_arr* self, long change, bool explicit_size) {
+void dynamic_arr_resize(dynamic_arr* self, long change, const bool explicit_size) {
   if (!explicit_size && !change)
     return;
 
@@ -415,8 +422,8 @@ void dynamic_arr_resize(dynamic_arr* self, long change, bool explicit_size) {
     }
 
     const unsigned long back_deadzone = self->cap - self->num;
-    newcap = newcap - (back_deadzone >> 1);
-  } else if (self->num + change >= self->cap + self->deadzone) {
+    newcap -= (back_deadzone >> 1);
+  } else if (self->num + change >= self->cap) {
     newcap += (self->cap >> 1) + 1;
   } else {
     return;
@@ -425,6 +432,9 @@ void dynamic_arr_resize(dynamic_arr* self, long change, bool explicit_size) {
   if (self->cap == newcap)
     return;
 
+#if DEBUG_DYNAMIC_ARR_RESIZE
+  printf("realloc: %lu -> %lu\n", self->cap, newcap);
+#endif
   self->start = realloc(self->start, newcap * self->size);
   if (!self->start) {
     fprintf(stderr, 
@@ -440,11 +450,16 @@ void dynamic_arr_resize(dynamic_arr* self, long change, bool explicit_size) {
 }
 
 void dynamic_arr_move(dynamic_arr* self, long change, unsigned long offset, unsigned long len) {
-  if (!change || !len || (unsigned int)abs((int)change) >= len)
+#if DEBUG_DYNAMIC_ARR_MOVE
+  printf("dynamic_arr_move: %ld %s {%lu SKIP, %lu byte(s)}\n", change, (change > 0 ? "->" : "<-"), offset, len);
+#endif
+
+  if (!change || !len 
+      || (change < 0 ? (unsigned long)(-change) > offset : (unsigned long)change > len))
     return;
 
   if (change < 0) {
-    for (unsigned long i = offset - change; i < len; i++)
+    for (unsigned long i = offset + (-change); i < len; i++)
       memcpy(
           self->start + index2off(self, i + change), 
           self->start + index2off(self, i), 
@@ -453,11 +468,31 @@ void dynamic_arr_move(dynamic_arr* self, long change, unsigned long offset, unsi
     return;
   }
 
-  for (unsigned long i = len + offset - change; i >= offset + 1; i++)
+  for (unsigned long i = offset + len - change; i > offset; i--)
     memcpy(
-        self->start + index2off(self, i + change + offset), 
-        self->start + index2off(self, i + offset), 
+        self->start + index2off(self, i + change), 
+        self->start + index2off(self, i), 
         self->size);
+
+  memcpy(
+      self->start + index2off(self, offset + change), 
+      self->start + index2off(self, offset), 
+      self->size);
+
+  return;
+}
+
+void dynamic_arr_print(const dynamic_arr* self) {
+  printf("%lu * %u byte(s): {%lu * %u byte(s), ", 
+      self->num, self->size, self->deadzone, self->size);
+
+  for (unsigned long i = 0; i < self->num; i++) {
+    for (unsigned long j = 0; j < self->size; j++)
+      printf("%x", *(self->start + index2off(self, i) + j));
+    printf(", ");
+  }
+  printf("%lu * %u byte(s)}\n", 
+      self->cap - self->num, self->size);
 
   return;
 }

@@ -1,6 +1,7 @@
 #ifndef __BLIB_DATASTRUCTURES_ARRAYS_DYNAMIC_H__
 #define __BLIB_DATASTRUCTURES_ARRAYS_DYNAMIC_H__
 #include <blib/defines/defines.h>
+#include <stdint.h>
 
 typedef struct {
   unsigned long cap; /* Maximum capacity/memory allocated in array */
@@ -8,7 +9,7 @@ typedef struct {
   unsigned int size; /* Size of each element */
 
   unsigned long deadzone; /* Zone in front of the array (results from any `*_quick()` functions) */
-  char* start; /* Start/ptr to the start of the array */
+  uint8_t* start; /* Start/ptr to the start of the array */
 } dynamic_arr;
 
 dynamic_arr __intern_dynamic_generic_arr_new(unsigned int element_size);
