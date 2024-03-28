@@ -344,9 +344,7 @@ void dynamic_arr_remove_at(dynamic_arr* self, unsigned long index, void* out) {
   if (out)
     memcpy(out, self->start + index2off(self, index), self->size);
 
-  dynamic_arr_print(self);
   dynamic_arr_move(self, -1, index, self->num - index);
-  dynamic_arr_print(self);
   dynamic_arr_resize(self, -1, false);
   self->num--;
 
