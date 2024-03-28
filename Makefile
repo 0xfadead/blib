@@ -24,6 +24,8 @@ WFLAGS += -Wall -Wextra -Wpedantic -Werror
 IFLAGS += -I$(INCLUDE_DIR)
 CFLAGS += $(WFLAGS) $(IFLAGS) -O2 -std=c99
 
+DFLAGS += "-DDISABLE_RUNTIME_BOUNDS_CHECKS=1"
+
 DBGFLAGS ?= -ggdb -DDEBUG=1
 
 ARFLAGS ?= rcs
@@ -56,7 +58,7 @@ src/datastructures/arrays/dynamic.o: include/blib/datastructures/arrays/dynamic.
 src/testing/time/time_tests.o: include/blib/testing/time/time_tests.h
 .c.o:
 	@echo "  CC    $@"
-	@ $(CC) -o $@ $< $(CFLAGS) -c
+	@ $(CC) -o $@ $< $(CFLAGS) $(DFLAGS) -c
 
 # ----- Lower level targets -----
 $(OUT): $(OBJS)

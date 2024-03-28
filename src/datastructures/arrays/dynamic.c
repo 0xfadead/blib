@@ -9,40 +9,64 @@
 /* ==================
  * Convenience Macros
  * ================== */
+#if DISABLE_RUNTIME_BOUNDS_CHECKS
+#define check_index(self, operation, i)
+#else
 #define check_index(self, operation, i) \
-  if (i >= self->num) {      \
-    fprintf(stderr,          \
-        "Attempt to " operation " element %lu from dynamic array of element count %lu!\n" \
-        "=== ABORT ===\n",   \
-        i, self->num);       \
-    abort();                 \
-  }
+  do {                                  \
+    if (i >= self->num) {               \
+      fprintf(stderr,                   \
+          "Attempt to " operation " element %lu from dynamic array of element count %lu!\n" \
+          "=== ABORT ===\n",            \
+          i, self->num);                \
+      abort();                          \
+    }                                   \
+  } while(0)
+#endif
 
+#if DISABLE_RUNTIME_BOUNDS_CHECKS
+#define check_rm_len(self, operation, number)
+#else
 #define check_rm_len(self, operation, number) \
-  if (number > self->num) {           \
-    fputs(                            \
-        "Attempt to " operation " a dynamic array of element count 0!\n" \
-        "=== ABORT ===\n", stderr);   \
-    abort();                          \
-  }
+  do {                                        \
+    if (number > self->num) {                 \
+      fputs(                                  \
+          "Attempt to " operation " a dynamic array of element count 0!\n" \
+          "=== ABORT ===\n", stderr);         \
+      abort();                                \
+    } \
+  } while (0)
+#endif
 
+#if DISABLE_RUNTIME_BOUNDS_CHECKS
+#define check_len(self, operation, n)
+#else
 #define check_len(self, operation, n) \
-  if (n > self->num) {                \
-    fprintf(stderr,                   \
-      "Attempt to " operation " %lu element(s) from dynamic array of element count %lu!\n" \
-      "=== ABORT ===\n",              \
-      n, self->num);                  \
-    abort();                          \
-  }
+  do {                                \
+    if (n > self->num) {              \
+      fprintf(stderr,                 \
+        "Attempt to " operation " %lu element(s) from dynamic array of element count %lu!\n" \
+        "=== ABORT ===\n",            \
+        n, self->num);                \
+      abort();                        \
+    }                                 \
+  while (0)
+#endif
 
+#if DISABLE_RUNTIME_BOUNDS_CHECKS
+#define check_index_len(self, operation, i, n)
+#else
 #define check_index_len(self, operation, i, n) \
-  if (i + n > self->num) { \
-    fprintf(stderr,        \
-        "Attempt to " operation " %lu element(s) at index %lu from dynamic array of element count %lu!\n" \
-        "=== ABORT ===\n", \
-        n, i, self->num);  \
-    abort();               \
-  }
+  do {                                         \
+    if (i + n > self->num) {                   \
+      fprintf(stderr,                          \
+          "Attempt to " operation " %lu element(s) at index %lu from dynamic array of element count %lu!\n" \
+          "=== ABORT ===\n",                   \
+          n, i, self->num);                    \
+      abort();                                 \
+    }                                          \
+  } while (0)
+#endif
 
 #define index2off(self, i) ((i + self->deadzone) * self->size)
 
@@ -51,7 +75,8 @@
           "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" \
           "!! NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE !!\n" \
           "!!       This may be a problem inside of blib.      !!\n" \
-          "!!    Please submit a bug report at its git repo!   !!\n" \
+          "!!    Please submit a bug report at its git repo:   !!\n" \
+          "!!        https://gihub.com/0xfadead/blib           !!\n" \
           "!!          Sorry for the inconvenience...          !!\n" \
           "!! NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE !!\n" \
           "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"
@@ -111,6 +136,10 @@ dynamic_arr dynamic_arr_copy(const dynamic_arr *src) {
   return dst;
 }
 
+void* dynamic_arr_get_start(nonnullable const dynamic_arr* self) {
+  return self->start + index2off(self, 0);
+} /* dynamic_arr_get_start */
+
 void dynamic_arr_replace(dynamic_arr* self, unsigned long index, const void* element) {
   check_index(self, "replace", index);
   memcpy(self->start + index2off(self, index), element, self->size);
@@ -125,6 +154,14 @@ void dynamic_arr_bulk_replace(dynamic_arr* self, unsigned long index, const void
   return;
 } /* dynamic_arr_bulk_replace */
 
+void dynamic_arr_set(nonnullable dynamic_arr* self, unsigned long index, nonnullable const void* element, unsigned long num) {
+  check_index_len(self, "set", index, num);
+
+  for (unsigned long i = index; i < num + index; i++)
+    memcpy(self->start + index2off(self, i), element, self->size);
+
+  return;
+} /* dynamic_arr_set */
 void dynamic_arr_flip(dynamic_arr* self, unsigned long index1, unsigned long index2) {
   uint8_t* buffer = NULL;
   if (self->num < self->cap) {
@@ -344,9 +381,7 @@ void dynamic_arr_remove_at(dynamic_arr* self, unsigned long index, void* out) {
   if (out)
     memcpy(out, self->start + index2off(self, index), self->size);
 
-  dynamic_arr_print(self);
   dynamic_arr_move(self, -1, index, self->num - index);
-  dynamic_arr_print(self);
   dynamic_arr_resize(self, -1, false);
   self->num--;
 

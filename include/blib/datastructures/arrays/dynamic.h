@@ -21,6 +21,13 @@ dynamic_arr __intern_dynamic_generic_arr_new(unsigned int element_size);
  * [in,out] Dynamic array to be copied
  */
 dynamic_arr dynamic_arr_copy(nonnullable const dynamic_arr* src);
+/**
+ * @function dynamic_arr_get_start
+ * @brief Get the real start of a dynamic array
+ * @param self
+ * [in] The dynamic array
+ */
+void* dynamic_arr_get_start(nonnullable const dynamic_arr* self);
 
 /**
  * @function dynamic_arr_replace
@@ -46,6 +53,19 @@ void dynamic_arr_replace(nonnullable dynamic_arr* self, unsigned long index, non
  * [in] Number of replacement elements
  */
 void dynamic_arr_bulk_replace(nonnullable dynamic_arr* self, unsigned long index, nonnullable const void* elements, unsigned long num);
+/**
+ * @function dynamic_arr_set
+ * @brief Set specified number of elements starting from `index' to `element'
+ * @param self
+ * [in,out] The dynamic array
+ * @param index
+ * [in] Start index of setting
+ * @param element
+ * [in] New element
+ * @param num
+ * [in] Number of elements to set
+ */
+void dynamic_arr_set(nonnullable dynamic_arr* self, unsigned long index, nonnullable const void* element, unsigned long num);
 
 /**
  * @function dynamic_arr_flip
