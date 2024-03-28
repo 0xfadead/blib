@@ -357,8 +357,10 @@ void dynamic_arr_quick_remove_at(dynamic_arr* self, unsigned long index, void* o
   if (out)
     memcpy(out, self->start + index2off(self, index), self->size);
   if (self->num >> 1 >= index) {
-    dynamic_arr_move(self, 1, index, index + 1);
-    self->deadzone--;
+    dynamic_arr_print(self);
+    dynamic_arr_move(self, 1, 0, index);
+    self->deadzone++;
+    dynamic_arr_print(self);
   } else {
     dynamic_arr_move(self, -1, index + 1, self->num - index - 1);
     dynamic_arr_resize(self, -1, false);
@@ -459,7 +461,7 @@ void dynamic_arr_move(dynamic_arr* self, long change, unsigned long offset, unsi
     return;
 
   if (change < 0) {
-    for (unsigned long i = offset + (-change); i < len; i++)
+    for (unsigned long i = offset + (-change); i < offset + len; i++)
       memcpy(
           self->start + index2off(self, i + change), 
           self->start + index2off(self, i), 
