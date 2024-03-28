@@ -1,7 +1,5 @@
 # Blib
 
--------
-
 ## About
 
 **B**ase **Lib**rary (or Blib) is a collection of basic functions and datastructure implementations.
@@ -9,8 +7,8 @@
 ## Usage
 
 <details closed>
-<summary>Dynamic arrays</summary>
-
+    <summary>Dynamic arrays</summary>
+    
 ```c
 #include <blib/datastructures/arrays/dynamic.h>
 #include <stdio.h>
@@ -48,7 +46,8 @@ int main(void) {
 </details>
 
 <details closed>
-<summary>Testing</summary>
+    <summary>Testing</summary>
+
 ```c
 #include <blib/testing/time/time_tests.h>
 #include <stdlib.h>
