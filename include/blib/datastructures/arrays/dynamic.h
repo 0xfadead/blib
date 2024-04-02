@@ -4,12 +4,12 @@
 #include <stdint.h>
 
 typedef struct {
-  unsigned long cap; /* Maximum capacity/memory allocated in array */
+  unsigned long __cap__; /* Maximum capacity/memory allocated in array */
   unsigned long num; /* Number of currently used elements */
-  unsigned int size; /* Size of each element */
+  unsigned int element_size; /* Size of each element */
 
-  unsigned long deadzone; /* Zone in front of the array (results from any `*_quick()` functions) */
-  uint8_t* start; /* Start/ptr to the start of the array */
+  unsigned long __deadzone__; /* Zone in front of the array (results from any `*_quick()` functions) */
+  uint8_t* __malloc_start__; /* Start/ptr to the start of the array */
 } dynamic_arr;
 
 dynamic_arr __intern_dynamic_generic_arr_new(unsigned int element_size);

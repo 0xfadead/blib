@@ -2,3 +2,5 @@
 *.~
 *.swap
 compile_flags.txt
+lib/*.*
+
