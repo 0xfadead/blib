@@ -136,7 +136,7 @@ dynamic_arr dynamic_arr_copy(const dynamic_arr *src) {
   return dst;
 }
 
-void* dynamic_arr_get_start(nonnullable const dynamic_arr* self) {
+void* dynamic_arr_get_start(const dynamic_arr* self) {
   return self->__malloc_start__ + index2off(self, 0);
 } /* dynamic_arr_get_start */
 
@@ -154,7 +154,7 @@ void dynamic_arr_bulk_replace(dynamic_arr* self, unsigned long index, const void
   return;
 } /* dynamic_arr_bulk_replace */
 
-void dynamic_arr_set(nonnullable dynamic_arr* self, unsigned long index, nonnullable const void* element, unsigned long num) {
+void dynamic_arr_set(dynamic_arr* self, unsigned long index, const void* element, unsigned long num) {
   check_index_len(self, "set", index, num);
 
   for (unsigned long i = index; i < num + index; i++)
