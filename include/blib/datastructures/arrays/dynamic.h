@@ -1,6 +1,5 @@
 #ifndef __BLIB_DATASTRUCTURES_ARRAYS_DYNAMIC_H__
 #define __BLIB_DATASTRUCTURES_ARRAYS_DYNAMIC_H__
-#include <blib/defines/defines.h>
 #include <stdint.h>
 
 typedef struct {
@@ -20,14 +19,14 @@ dynamic_arr __intern_dynamic_generic_arr_new(unsigned int element_size);
  * @param src
  * [in,out] Dynamic array to be copied
  */
-dynamic_arr dynamic_arr_copy(nonnullable const dynamic_arr* src);
+dynamic_arr dynamic_arr_copy(const dynamic_arr* src);
 /**
  * @function dynamic_arr_get_start
  * @brief Get the real start of a dynamic array
  * @param self
  * [in] The dynamic array
  */
-void* dynamic_arr_get_start(nonnullable const dynamic_arr* self);
+void* dynamic_arr_get_start(const dynamic_arr* self);
 
 /**
  * @function dynamic_arr_replace
@@ -39,7 +38,7 @@ void* dynamic_arr_get_start(nonnullable const dynamic_arr* self);
  * @param element
  * [in] Pointer to new element 
  */
-void dynamic_arr_replace(nonnullable dynamic_arr* self, unsigned long index, nonnullable const void* element);
+void dynamic_arr_replace(dynamic_arr* self, unsigned long index, const void* element);
 /**
  * @function dynamic_arr_bulk_replace
  * @brief Replace sepcified number of elements of dynamic array at specified index
@@ -52,7 +51,7 @@ void dynamic_arr_replace(nonnullable dynamic_arr* self, unsigned long index, non
  * @param num
  * [in] Number of replacement elements
  */
-void dynamic_arr_bulk_replace(nonnullable dynamic_arr* self, unsigned long index, nonnullable const void* elements, unsigned long num);
+void dynamic_arr_bulk_replace(dynamic_arr* self, unsigned long index, const void* elements, unsigned long num);
 /**
  * @function dynamic_arr_set
  * @brief Set specified number of elements starting from `index' to `element'
@@ -65,7 +64,7 @@ void dynamic_arr_bulk_replace(nonnullable dynamic_arr* self, unsigned long index
  * @param num
  * [in] Number of elements to set
  */
-void dynamic_arr_set(nonnullable dynamic_arr* self, unsigned long index, nonnullable const void* element, unsigned long num);
+void dynamic_arr_set(dynamic_arr* self, unsigned long index, const void* element, unsigned long num);
 
 /**
  * @function dynamic_arr_flip
@@ -77,7 +76,7 @@ void dynamic_arr_set(nonnullable dynamic_arr* self, unsigned long index, nonnull
  * @param index2
  * [in] The index of the second element 
  */
-void dynamic_arr_flip(nonnullable dynamic_arr* self, unsigned long index1, unsigned long index2);
+void dynamic_arr_flip(dynamic_arr* self, unsigned long index1, unsigned long index2);
 /**
  * @function dynamic_arr_bulk_flip
  * @brief Flip two arrays of elements, at the specified indexes, with each other
@@ -90,7 +89,7 @@ void dynamic_arr_flip(nonnullable dynamic_arr* self, unsigned long index1, unsig
  * @param num
  * [in] The number of elements to flip
  */
-void dynamic_arr_bulk_flip(nonnullable dynamic_arr* self, unsigned long index1, unsigned long index2, unsigned long num);
+void dynamic_arr_bulk_flip(dynamic_arr* self, unsigned long index1, unsigned long index2, unsigned long num);
 
 /**
  * @function dynamic_arr_peek
@@ -102,7 +101,7 @@ void dynamic_arr_bulk_flip(nonnullable dynamic_arr* self, unsigned long index1, 
  * @param out
  * [out] Pointer to write the element to 
  */
-void dynamic_arr_peek(nonnullable const dynamic_arr* self, unsigned long index, nonnullable void* out);
+void dynamic_arr_peek(const dynamic_arr* self, unsigned long index, void* out);
 /**
  * @function dynamic_arr_bulk_peek
  * @brief Read specified amount of elements in dynamic array from specified index on
@@ -113,7 +112,7 @@ void dynamic_arr_peek(nonnullable const dynamic_arr* self, unsigned long index, 
  * @param out
  * [out] Buffer for elements
  */
-void dynamic_arr_bulk_peek(nonnullable dynamic_arr* self, unsigned long index, nonnullable void* out, unsigned long num);
+void dynamic_arr_bulk_peek(dynamic_arr* self, unsigned long index, void* out, unsigned long num);
 
 /**
  * @function dynamic_arr_append
@@ -123,7 +122,7 @@ void dynamic_arr_bulk_peek(nonnullable dynamic_arr* self, unsigned long index, n
  * @param element
  * [in] The element to be appended 
  */
-void dynamic_arr_append(nonnullable dynamic_arr* self, nonnullable const void* element);
+void dynamic_arr_append(dynamic_arr* self, const void* element);
 /**
  * @function dynamic_arr_bulk_append
  * @brief Add a specified amount of elements to the end of a dynamic array
@@ -132,7 +131,7 @@ void dynamic_arr_append(nonnullable dynamic_arr* self, nonnullable const void* e
  * @param elements
  * [in] 
  */
-void dynamic_arr_bulk_append(nonnullable dynamic_arr* self, nonnullable const void* elements, unsigned long num);
+void dynamic_arr_bulk_append(dynamic_arr* self, const void* elements, unsigned long num);
 /** 
  * @function dynamic_arr_prepend
  * @brief Append an element to the end of a dynamic array
@@ -141,7 +140,7 @@ void dynamic_arr_bulk_append(nonnullable dynamic_arr* self, nonnullable const vo
  * @param element
  * [in] The element to be appended 
  */
-void dynamic_arr_prepend(nonnullable dynamic_arr* self, nonnullable const void* element);
+void dynamic_arr_prepend(dynamic_arr* self, const void* element);
 /**
  * @function dynamic_arr_bulk_prepend
  * @brief Add a specified amount of elements to the start of a dynamic array
@@ -150,7 +149,7 @@ void dynamic_arr_prepend(nonnullable dynamic_arr* self, nonnullable const void* 
  * @param elements
  * [in] 
  */
-void dynamic_arr_bulk_prepend(nonnullable dynamic_arr* self, nonnullable const void* elements, unsigned long num);
+void dynamic_arr_bulk_prepend(dynamic_arr* self, const void* elements, unsigned long num);
 /**
  * @function dynamic_arr_insert_at
  * @brief Insert an element at the specified index
@@ -161,7 +160,7 @@ void dynamic_arr_bulk_prepend(nonnullable dynamic_arr* self, nonnullable const v
  * @param element
  * [in] The element to be inserted 
  */
-void dynamic_arr_insert_at(nonnullable dynamic_arr* self, unsigned long index, nonnullable const void* element);
+void dynamic_arr_insert_at(dynamic_arr* self, unsigned long index, const void* element);
 
 /**
  * @function dynamic_arr_bulk_insert_at
@@ -175,7 +174,7 @@ void dynamic_arr_insert_at(nonnullable dynamic_arr* self, unsigned long index, n
  * @param num
  * Number of elements to insert
  */
-void dynamic_arr_bulk_insert_at(nonnullable dynamic_arr* self, unsigned long index, nonnullable void* elements, unsigned long num);
+void dynamic_arr_bulk_insert_at(dynamic_arr* self, unsigned long index, void* elements, unsigned long num);
 
 /**
  * @function dynamic_arr_precate
@@ -185,7 +184,7 @@ void dynamic_arr_bulk_insert_at(nonnullable dynamic_arr* self, unsigned long ind
  * @param out
  * [out,opt] Pointer to write the element to 
  */
-void dynamic_arr_precate(nonnullable dynamic_arr* self, nullable void* out);
+void dynamic_arr_precate(dynamic_arr* self, void* out);
 /**
  * @function dynamic_arr_quick_precate
  * @brief Faster version of dynamic_arr_precate(), but wastes memory
@@ -194,7 +193,7 @@ void dynamic_arr_precate(nonnullable dynamic_arr* self, nullable void* out);
  * @param out
  * [out,opt] Pointer to write the element to 
  */
-void dynamic_arr_quick_precate(nonnullable dynamic_arr* self, nullable void* out);
+void dynamic_arr_quick_precate(dynamic_arr* self, void* out);
 /**
  * @function dynamic_arr_truncate
  * @brief Pop last element of array
@@ -203,7 +202,7 @@ void dynamic_arr_quick_precate(nonnullable dynamic_arr* self, nullable void* out
  * @param out
  * [out,opt] Pointer to write the element to 
  */
-void dynamic_arr_truncate(nonnullable dynamic_arr* self, nullable void* out);
+void dynamic_arr_truncate(dynamic_arr* self, void* out);
 /**
  * @function dynamic_arr_resize_to
  * @brief Resize the dynamic array to specified size
@@ -214,14 +213,14 @@ void dynamic_arr_truncate(nonnullable dynamic_arr* self, nullable void* out);
  * @param new_size
  * [in] New size of the array
  */
-void dynamic_arr_resize_to(nonnullable dynamic_arr* self, nullable void* out, unsigned long new_size);
+void dynamic_arr_resize_to(dynamic_arr* self, void* out, unsigned long new_size);
 /**
  * @function dynamic_arr_trim
  * @brief Deallocate all unused space of array
  * @param self
  * [in,out] The generated dynamic array 
  */
-void dynamic_arr_trim(nonnullable dynamic_arr* self);
+void dynamic_arr_trim(dynamic_arr* self);
 /**
  * @function dynamic_arr_remove_at
  * @brief Remove element at the specified index
@@ -232,7 +231,7 @@ void dynamic_arr_trim(nonnullable dynamic_arr* self);
  * @param out
  * [out,opt] Pointer to write the element to 
  */
-void dynamic_arr_remove_at(nonnullable dynamic_arr* self, unsigned long index, nullable void* out);
+void dynamic_arr_remove_at(dynamic_arr* self, unsigned long index, void* out);
 /**
  * @function dynamic_arr_bulk_remove_at
  * @brief Remove specified amount of elements at index from dynamic array
@@ -245,7 +244,7 @@ void dynamic_arr_remove_at(nonnullable dynamic_arr* self, unsigned long index, n
  * @param num
  * [in] Number of elements to remove
  */
-void dynamic_arr_bulk_remove_at(nonnullable dynamic_arr* self, unsigned long index, nullable void* out, unsigned long num);
+void dynamic_arr_bulk_remove_at(dynamic_arr* self, unsigned long index, void* out, unsigned long num);
 /**
  * @function dynamic_arr_remove_at_quick
  * @brief Faster version of `dynamic_arr_remove_at()`, but wastes memory
@@ -256,14 +255,14 @@ void dynamic_arr_bulk_remove_at(nonnullable dynamic_arr* self, unsigned long ind
  * @param out
  * [out,opt] Pointer to write the element to 
  */
-void dynamic_arr_quick_remove_at(nonnullable dynamic_arr* self, unsigned long index, nullable void* out);
+void dynamic_arr_quick_remove_at(dynamic_arr* self, unsigned long index, void* out);
 /**
  * @function dynamic_arr_cleanup
  * @brief Free and cleanup the specified array
  * @param self
  * [in,out] The generated dynamic array 
  */
-void dynamic_arr_cleanup(nonnullable dynamic_arr* self);
+void dynamic_arr_cleanup(dynamic_arr* self);
 
 /**
  * @function dynamic_arr_new
