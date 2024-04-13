@@ -29,14 +29,17 @@ int main(void) {
     /* retrieve three elements */
     int elems[3] = {0};
     dynamic_arr_bulk_peek(arr, 0, elems, 2);
-    /* --------------------- */
+    /* ----------------------- */
 
-    /*  */
+    /* print elements */
     printf(
         "elems[0] = %i; elems[1] = %i; elems[2] = %i\n", 
         elems[0], elems[1], elems[2]);
+    /* -------------- */
 
+    /* Pop last element */
     dynamic_arr_truncate(arr, NULL);
+    /* ---------------- */
 
     dynamic_arr_cleanup(arr);
 
